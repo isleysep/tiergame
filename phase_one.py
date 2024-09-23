@@ -3,26 +3,9 @@ import requests
 import googleapiclient.discovery
 import sys
 from pathvalidate import sanitize_filename
+import pathlib
+from PIL import Image
 
-def download_thumbnail(youtube_url, artist_title):
-    # Extract video ID from the URL
-    video_id = youtube_url.split("v=")[-1]
-    thumbnail_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
-    
-    # Download the thumbnail
-    response = requests.get(thumbnail_url)
-    if response.status_code == 200:
-        filename = f"{artist_title}.jpg"
-        with open(filename, 'wb') as f:
-            f.write(response.content)
-        return filename
-    else:
-        print(f"Failed to download thumbnail for {artist_title}")
-        return None
-
-# # Example usage
-# thumbnails = []
-# thumbnails.append(download_thumbnail("https://www.youtube.com/watch?v=VIDEO_ID", "Artist:Title"))
 def main():
     if len(sys.argv) < 2:
         print(f"usage: {sys.argv[0]} PLAYLIST_URL", file=sys.stderr)
@@ -31,6 +14,8 @@ def main():
     playlist_url = sys.argv[1].split("list=")[-1]
     API_KEY = "AIzaSyC-KagZHFHpPo4vCnqWMfHBlOmn7F5DrKM"
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = API_KEY)
+    output = pathlib.Path("output/")
+    output.mkdir(parents=True, exist_ok=True)
 
     request = youtube.playlistItems().list(
         part = "snippet",
@@ -50,16 +35,26 @@ def main():
 
     # get thumbnails
     for video in playlist_items:
-        thumb_url = video["snippet"]["thumbnails"]["high"]["url"]
-        if "maxres" in video["snippet"]["thumbnails"]:
-            thumb_url = video["snippet"]["thumbnails"]["maxres"]["url"]
+        thumb_url = video["snippet"]["thumbnails"]["default"]["url"]
+        if "medium" in video["snippet"]["thumbnails"]:
+            thumb_url = video["snippet"]["thumbnails"]["medium"]["url"]
         thumb_response = requests.get(thumb_url)
         artist_title = video["snippet"]["title"]
         if thumb_response.status_code == 200:
-            filename = f"{artist_title}.jpg"
-            filename = sanitize_filename(filename)
+            filename = f"output/{sanitize_filename(artist_title)}.jpg"
             with open(filename, 'wb') as f:
                 f.write(thumb_response.content)
+            # crop image
+            with Image.open(filename) as img:
+                width, height = img.size
+                new_size = min(width, height)
+                # calculate coordinates
+                left = (width - new_size) / 2
+                top = (height - new_size) / 2
+                right = (width + new_size) / 2
+                bottom = (height + new_size) / 2
+                img_cropped = img.crop((left, top, right, bottom))
+                img_cropped.save(filename)
         else:
             print(f"Failed to download thumbnail for {artist_title}")
             return None

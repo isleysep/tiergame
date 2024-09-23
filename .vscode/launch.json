@@ -11,6 +11,14 @@
             "program": "${workspaceFolder}/phase_one.py",
             "console": "integratedTerminal",
             "args": ["https://www.youtube.com/playlist?list=PLIk3o-SNMej2eTrQ8cPcsCZON96CULN_H"]
+        },
+        {
+            "name": "Phase Two",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/phase_two.py",
+            "console": "integratedTerminal"
         }
     ]
+
 }
