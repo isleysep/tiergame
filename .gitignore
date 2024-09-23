@@ -1,4 +1,5 @@
 *.jpg
 /.venv/
 /output/*.jpg
+/intput/*.png
 /input/*.jpg
