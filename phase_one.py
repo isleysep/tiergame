@@ -16,6 +16,8 @@ def main():
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey = API_KEY)
     output = pathlib.Path("output/")
     output.mkdir(parents=True, exist_ok=True)
+    input = pathlib.Path("input/")
+    output.mkdir(parents=True, exist_ok=True)
 
     request = youtube.playlistItems().list(
         part = "snippet",
@@ -35,6 +37,9 @@ def main():
 
     # get thumbnails
     for video in playlist_items:
+        if video["snippet"]["title"] == "Deleted video":
+            print("Deleted video found, skipping")
+            return None
         thumb_url = video["snippet"]["thumbnails"]["default"]["url"]
         if "medium" in video["snippet"]["thumbnails"]:
             thumb_url = video["snippet"]["thumbnails"]["medium"]["url"]

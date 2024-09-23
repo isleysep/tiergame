@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/phase_one.py",
             "console": "integratedTerminal",
-            "args": ["https://www.youtube.com/playlist?list=PLIk3o-SNMej2eTrQ8cPcsCZON96CULN_H"]
+            "args": ["https://www.youtube.com/playlist?list=PLi6sUBxLTejBT7f4X0CA6D5Fitoi3XDg7"]
         },
         {
             "name": "Phase Two",
