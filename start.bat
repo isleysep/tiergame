@@ -47,7 +47,7 @@ goto menu
 
 :check_updates
 echo Checking for updates from the Git repository...
-git pull https://github.com/isleysep/tiergame
+git pull
 pause
 goto menu
 
