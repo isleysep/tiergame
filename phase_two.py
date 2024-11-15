@@ -9,6 +9,7 @@ from openpyxl.styles import PatternFill
 rankings_df = pd.DataFrame()
 directory = os.fsencode("input")
 for file in os.listdir(directory):
+    print("Reading input from " + os.fsdecode(file))
     # Step 1: Load the train image (the main image where we want to search for templates)
     train_img_path = os.fsdecode(file)
     person_name = os.path.splitext(train_img_path)[0]
@@ -21,17 +22,22 @@ for file in os.listdir(directory):
     line_color_value = 0  # Change this to the correct value if needed
 
     # Step 5: Tolerance for detecting "black" (to account for noise)
-    tolerance = 10  # Adjust this based on the variation of the black line
+    tolerance = 40  # Adjust this based on the variation of the black line
 
     # Step 6: Detect horizontal lines by scanning each row for uniform black pixels
     line_positions = []
+    is_line_detected = False  # Flag to check if a line is currently being detected
     for y in range(image_height):
         row = gray[y, :]  # Get all pixels in the row (one row at a time)
-        
-        # Check if all or most pixels in the row match the black line color
+
+        # Check if the row matches the black line color
         if np.all(np.abs(row - line_color_value) <= tolerance):
-            line_positions.append(y)
-    line_positions.append(image_height - 1)
+            if not is_line_detected:
+                # Start of a new line block
+                line_positions.append(y)
+                is_line_detected = True
+        else:
+            is_line_detected = False  # Reset when row is not part of a line
 
     # Step 7: Group line positions (in case multiple consecutive rows match the line color)
     filtered_lines = []

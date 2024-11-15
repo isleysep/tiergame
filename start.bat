@@ -15,13 +15,15 @@ echo    Select Phase to Run:
 echo ===============================
 echo 1. Phase One (Requires YouTube Playlist URL)
 echo 2. Phase Two (Checks for input folder)
-echo 3. Exit
+echo 3. Check for Updates
+echo 4. Exit
 echo ===============================
 set /p choice="Enter your choice (1-3): "
 
 if "%choice%"=="1" goto phase_one
 if "%choice%"=="2" goto phase_two
-if "%choice%"=="3" goto end
+if "%choice%"=="3" goto check_updates
+if "%choice%"=="4" goto end
 echo Invalid choice, please try again.
 pause
 goto menu
@@ -40,6 +42,12 @@ if exist "input" (
 ) else (
     echo Error: input folder does not exist. Please create the input folder and try again.
 )
+pause
+goto menu
+
+:check_updates
+echo Checking for updates from the Git repository...
+git pull https://github.com/isleysep/tiergame
 pause
 goto menu
 
