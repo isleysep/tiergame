@@ -22,11 +22,12 @@ for file in os.listdir(directory):
     line_color_value = 0  # Change this to the correct value if needed
 
     # Step 5: Tolerance for detecting "black" (to account for noise)
-    tolerance = 40  # Adjust this based on the variation of the black line
+    tolerance = 50  # Adjust this based on the variation of the black line
 
     # Step 6: Detect horizontal lines by scanning each row for uniform black pixels
     line_positions = []
-    is_line_detected = False  # Flag to check if a line is currently being detected
+    line_positions.append(0)  # Add the starting position (top of the image)
+    is_line_detected = True  # Flag to check if a line is currently being detected
     for y in range(image_height):
         row = gray[y, :]  # Get all pixels in the row (one row at a time)
 
@@ -38,6 +39,8 @@ for file in os.listdir(directory):
                 is_line_detected = True
         else:
             is_line_detected = False  # Reset when row is not part of a line
+    if (image_height-1 in line_positions) == False:
+        line_positions.append(image_height - 1)
 
     # Step 7: Group line positions (in case multiple consecutive rows match the line color)
     filtered_lines = []
